@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title> I am another iFrame </title>
+		<h1>BYE BYE BYE churrumiros!!!</h1>
+		<script>
+			localStorage.setItem('tchau', 'bye');
+			console.log('myFrame.localStorage', window.localStorage);
+			console.log('INDEX', parent);
+			//alert(`INDEX: ${document.domain}`);
+			function buttonPressed()
+			{
+				alert('CLICK');
+			}
+		</script>
+	</head>
+	<body>	
+		<button onclick="buttonPressed()">BUTTON</button>
+	</body>
+</html>
