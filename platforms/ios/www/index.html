@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <title>Pulsar Test</title>
+				<style>
+					#container {
+						position: relative;
+						width: 320px;
+						height: 568px;
+						border-width: 1px;
+						border-style: solid
+					}
+					#context {
+						width: 100%;
+						height: 100%;
+					}
+					#text {
+						width: 100%;
+						height: 100%;
+					}
+					#label {
+						width: 100%;
+						height: 50%;
+						border-width: 1px;
+						border-style: solid
+					}
+					#pulsar {
+						width: 100%;
+						height: 100%;
+					}
+					#aView{
+						left: 0px;
+						position: absolute;
+						width: 100%;
+					}
+				</style>
+			<script>
+				function transitate(view)
+				{
+					var view = new View(document.getElementById('aView'));
+					
+					View.animateBlock(1.0, function(){
+						view.frame = new Rectangle(100, 100, 100, 100);
+					}, function(){
+						View.animateBlock(7.0, function(){
+							view.frame = new Rectangle(0,0,0,0);
+						}, function(){
+							//transitate(view);
+						})
+					})
+				}
+			</script>
+    </head>
+    <body onload="transitate();">
+        <div class="app">
+            <h1>Apache Cordova</h1>
+            <div id="deviceready" class="blink">
+                <p class="event listening">Connecting to Device</p>
+                <p class="event received">Device is Ready</p>
+            </div>
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+				<script type="text/javascript" src="js/core.js"></script>
+				<script type="text/javascript" src="js/gui.js"></script>
+			
+				<div id="container" class="co">
+					<div id="aView"> Pulsar Transitation Text </div>
+					<script>
+						
+						var view = new View(document.getElementById('container'));
+						
+						view.clipsToBounds = true;
+
+						function getContext()
+						{
+							var c1 = view.context;
+
+							//c1.fillStyle = '#AA2244';
+							//c1.fillRect(0, 0, c1.canvas.width, c1.canvas.height);
+
+							var c2 = view.context;
+							c2.fillStyle = '#4422AA';
+							c2.fillRect(0, 0, c2.canvas.width, c2.canvas.height);
+							c2.lineWidth = '0.5px';
+							
+							var frameCount = new View(document.getElementById('frameCount'));
+							var frameRate = new View(document.getElementById('frameRate'));
+							var element = document.getElementById('frameCount');
+							
+							frameCount.backgroundColor = '#FFFFFF'
+							//frameRate.backgroundColor = '#FFFFFFAA'
+							
+							var frames = 0;
+							var t = 0.0;
+
+							function timer()
+							{
+								c2.fillRect(0, 0, c2.canvas.width, c2.canvas.height);
+								
+								c2.strokeStyle = '#11DD11';
+								c2.beginPath();
+								c2.moveTo(0,0);
+
+								for (var i = 0; i < c2.canvas.width; i += 0.25)
+									c2.lineTo(i, (Math.sin((i * 0.125 + t) * (t+=0.00001)) + 1.0) * c2.canvas.height / 2.0);
+								c2.stroke();
+								
+								c2.strokeStyle = '#DD1111';
+								c2.beginPath();
+								c2.moveTo(0,0);
+								
+								for (var i = 0; i < c2.canvas.width; i += 0.25)
+									c2.lineTo((Math.sin((i * 0.125 + t) * (t)) + 1.0) * c2.canvas.width / 2.0, i);
+								c2.stroke();
+								
+								element.innerHTML = ++frames;
+								
+								window.setTimeout(timer, 0);
+							}
+							 
+							timer();
+							//var c3 = view.subviews[0].subviews[1].context;
+							//c3.fillStyle = '#44AAAA';
+							//c3.fillRect(0, 0, c3.canvas.width, c3.canvas.height);
+
+							//v2 = view.subviews[0];
+							//v2.clipsToBounds = true;
+							//v2.alpha = 0.80;
+
+							/*v2.frame = {
+								origin: {
+									x: 0,
+									y: 0
+								},
+								size: {
+									width: v2.superview.frame.size.width + 50,
+									height: v2.superview.frame.size.height + 50
+								}
+							}*/
+
+							//view.subviews[1].backgroundColor = '#FFFFFF';
+							//view.subviews[1].clipsToBounds = true;
+						}
+					</script>
+					<p id="frameCount" style="position: absolute; left: 20px; top: 20px"></p>
+					<p id="frameRate" style="position: absolute; rigt: 20px; top: 20px"></p>
+					<button onclick="getContext()" style="position: absolute; left: 40px; right: 40px; bottom: 20px; height: 40px;"> BEGIN TO DRAW </button>
+				</div>
+    </body>
+</html>

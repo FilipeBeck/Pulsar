@@ -1,0 +1,36 @@
+<html>
+	<head>
+		<title> Seal vs Freeze vs Normal </title>
+	</head>
+	
+	<body>
+		<script>
+			var ar = [];
+			var LIMIT = 1000000
+			
+			for (var c = 0; c < LIMIT; c++)
+				ar.push(c);
+			
+			var result1 = 0;
+			var start1 = new Date().getTime();
+			
+			for (var i in ar)
+				result1 += ar[i];
+			
+			var end1 = new Date().getTime();
+			
+			document.write(`forin(${result1}): ${end1 - start1}<br>`);
+			
+			var result2 = 0;
+			var start2 = new Date().getTime();
+			
+			for (var j = 0, count = ar.length; j < count; j++)
+				result2 += ar[j];
+			
+			var end2 = new Date().getTime();
+			
+			document.write(`for(${result2}): ${end2 - start2}`);
+				
+		</script>
+	</body>
+</html>

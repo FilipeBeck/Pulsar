@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: CoreDefinition</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: CoreDefinition</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="Pulsar.html">Pulsar</a>~</span>CoreDefinition</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="CoreDefinition"><span class="type-signature">(abstract) </span>new CoreDefinition<span class="signature">(Superclasses)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Definição base para todas as classes criadas com o framework. Embora seja documentada como uma classe abstrata com membros de instância, isto deve ser
+entendido em um contexto meta-linguístico. As classes criadas pelo framework com <b>Pulsar.class</b> podem ser vistas como uma
+instância de uma definição do núcleo. As propriedades serão aplicadas através de <b>CoreDefinition.call</b> em cada classe definida pelo programador,
+e na classe <b>Object</b> durante a inicialização do framework (com Superclass = undefined, Superclasses = []).
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>Superclasses</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="CoreDefinition.html">CoreDefinition</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">As classes ancestrais, que pode conter apenas um elemento em caso de heraça simples</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core.js.html">core.js</a>, <a href="core.js.html#line169">line 169</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id=".descriptor"><span class="type-signature">(static, constant) </span>descriptor<span class="type-signature"> :<a href="Pulsar.html#~SelfDescriptor">Pulsar~SelfDescriptor</a></span></h4>
+
+
+
+
+<div class="description">
+    Descritor de propriedades e métodos, estáticos e de instância.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="Pulsar.html#~SelfDescriptor">Pulsar~SelfDescriptor</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core.js.html">core.js</a>, <a href="core.js.html#line192">line 192</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".layer"><span class="type-signature">(static, constant) </span>layer<span class="type-signature"> :Number</span></h4>
+
+
+
+
+<div class="description">
+    Número da camada na árvore genealógica, igual a camada mais alta entre as superclasses + 1
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core.js.html">core.js</a>, <a href="core.js.html#line204">line 204</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="Superclass"><span class="type-signature">(constant) </span>Superclass<span class="type-signature"> :<a href="CoreDefinition.html">CoreDefinition</a></span></h4>
+
+
+
+
+<div class="description">
+    A classe ancestral.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="CoreDefinition.html">CoreDefinition</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core.js.html">core.js</a>, <a href="core.js.html#line180">line 180</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="Superclasses"><span class="type-signature">(constant) </span>Superclasses<span class="type-signature"> :Array.&lt;<a href="CoreDefinition.html">CoreDefinition</a>></span></h4>
+
+
+
+
+<div class="description">
+    As classes acestrais, que pode conter apenas um elemnto em caso de heraça simples
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;<a href="CoreDefinition.html">CoreDefinition</a>></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core.js.html">core.js</a>, <a href="core.js.html#line183">line 183</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="~superConstructors"><span class="type-signature">(inner) </span>superConstructors<span class="type-signature"> :Array.&lt;function()></span></h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;function()></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core.js.html">core.js</a>, <a href="core.js.html#line214">line 214</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="~bodyDefiner"><span class="type-signature">(inner) </span>bodyDefiner<span class="signature">(rules)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Define as propriedades do corpo
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>rules</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">As regras para a definiçào. Pode ser qualquer combinação permitida entre os seguintes identificadores:<br>
+<ul>
+ <li><b>public:</b> Membro público (default), acessível através de 'this'. Precisa ser a primeira declaração. Imcompatível com <b>private</b></li>
+ <li><b>private:</b> Membro privado, acessível através de '$(this)'. Precisa ser a primeira declaração. Imcompatível com <b>public</b> e <b>static</b></li>
+ <li><b>static:</b> Membro de classe. Precisa vir antes de <b>var</b> ou <b>let</b>. Imcompatível com <b>private</b></li>
+ <li><b>var:</b> Membro mutável. Imcompatível com <b>let</b> e métodos</li>
+ <li><b>let:</b> Membro imutável. Imcompatível com <b>var</b>, propriedades computadas e métodos</li>
+</ul></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core.js.html">core.js</a>, <a href="core.js.html#line279">line 279</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Um objeto vazio onde será inserida a propriedade ou método
+</div>
+
+
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>Pulsar.class('MyClass', Object, function($)
+{
+  $('public var').a = 10;  // this.a
+  $('private let').b = 20; // $(this).b
+  $('static var').c = 30;  // MyClass.c
+})</code></pre>
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+
+    
+
+    <h4 class="name" id=".selfProcedure"><span class="type-signature"></span>selfProcedure<span class="signature">(rulesOrInstance)</span><span class="type-signature"> &rarr; {<a href="Object.html">Object</a>|<a href="Pulsar-CoreDefinition.html">Pulsar~CoreDefinition</a>}</span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>rulesOrInstance</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type"><a href="Pulsar-CoreDefinition.html">Pulsar~CoreDefinition</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Quando chamada no escopo local da função definidora da classe (fora do corpo dos métodos e
+propriedades computadas), este parâmetro deve ser uma string com as regras de definição contendo qualquer combinação permitida entre 'public',
+'private', 'static', 'var' e 'let'. Quando chamada no escopo dos métodos e propriedades computadas, este parâmetro deve ser obrigatoriamente uma
+referência a uma instância da classe.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core.js.html">core.js</a>, <a href="core.js.html#line331">line 331</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Quando chamada no escopo local, o valor de retorno será um objeto vazio onde será armazenado a propriedade ou método.
+Quando chamada no escopo das propriedades e métodos, o valor de retorno será uma referência ao escopo privado da classe
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Object.html">Object</a></span>
+|
+
+<span class="param-type"><a href="Pulsar-CoreDefinition.html">Pulsar~CoreDefinition</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+            
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Dictionary.html">Dictionary</a></li><li><a href="Object.html">Object</a></li><li><a href="Pulsar-CoreDefinition.html">CoreDefinition</a></li><li><a href="Pulsar-PrivateDefinition.html">PrivateDefinition</a></li><li><a href="View.html">View</a></li></ul><h3>Namespaces</h3><ul><li><a href="$.html">$</a></li><li><a href="Pulsar.html">Pulsar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jan 05 2016 03:53:34 GMT-0200 (BRST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

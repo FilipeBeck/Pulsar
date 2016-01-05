@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title> Eu sou o index.html </title>
+		<script src="../js/core.js"></script>
+		<script src="../js/gui/gui.js"></script>
+		<script src="../js/controllers/controllers.js"></script>
+		<script>
+			Pulsar.class('MyController', ViewController, function($)
+			{
+				$('var').view1 = undefined;
+				
+				$('public').buttonPressed = function(sender)
+				{
+					this.view1.backgroundColor = '#EEEEFF';
+				}
+				
+				$('public').buttonReleased = function(sender)
+				{
+					//alert(`${sender.innerHTML} released`);
+				}
+			})
+			
+			function load()
+			{
+				Pulsar.class('MyClass', Object, function($)
+				{
+					$().init = function()
+					{
+						alert('JOOJJOJOJOJO');
+					}
+				})
+				
+				localStorage.setItem('oi', 'HI');
+				console.log('index.localStorage', window.localStorage);
+				var INDEX = 'INDEX_VAR'
+				//alert(`INDEX: ${document.domain}`);
+				var iframe = document.getElementsByTagName( "iframe" )[ 0 ];
+				//alert( "Frame title: " + iframe.contentWindow.document.title );
+				
+			}
+		</script>
+	</head>
+	<body onLoad="window['app'] = new Application('application.storyboard')">
+	</body>
+</html>
