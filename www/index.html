@@ -94,7 +94,8 @@
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
 				<script type="text/javascript" src="js/core.js"></script>
-				<script type="text/javascript" src="js/gui.js"></script>
+				<script type="text/javascript" src="js/gui/View.js"></script>
+				<script type="text/javascript" src="js/controllers/Application.js"></script>
 			
 				<div id="container" class="co">
 					<div id="aView"> Pulsar Transitation Text </div>
@@ -148,7 +149,7 @@
 								
 								element.innerHTML = ++frames;
 								
-								window.setTimeout(timer, 0);
+								Application.setDirectMessage(timer);
 							}
 							 
 							timer();

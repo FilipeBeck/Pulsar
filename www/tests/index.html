@@ -3,23 +3,29 @@
 	<head>
 		<title> Eu sou o index.html </title>
 		<script src="../js/core.js"></script>
-		<script src="../js/gui/gui.js"></script>
-		<script src="../js/controllers/controllers.js"></script>
+		<script src="../js/gui/View.js"></script>
+		<script src="../js/controllers/NavigationController.js"></script>
+		<script src="../js/controllers/Storyboard.js"></script>
+		<script src="../js/controllers/Application.js"></script>
 		<script>
 			Pulsar.class('MyController', ViewController, function($)
 			{
 				$('var').view1 = undefined;
+				$('let').scene = $.new(Scene);
 				
 				$('public').buttonPressed = function(sender)
 				{
-					this.view1.backgroundColor = '#EEEEFF';
+					this.performSegue('myFrame1', this);
 				}
 				
 				$('public').buttonReleased = function(sender)
 				{
-					//alert(`${sender.innerHTML} released`);
+					Application.setDirectMessage(function(){
+						//alert('released - direct message');
+					})
 				}
 			})
+			
 			
 			function load()
 			{

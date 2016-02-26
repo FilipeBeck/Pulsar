@@ -2,9 +2,10 @@
 
 /**
  * @fileoverview Núcleo do framework. Este deve ser o primeiro arquivo a ser carregado pelo documento.
- * Nele são definidos as funções para criação de classes, importação de módulos, e uma classe para criação de simples dicionários dentro das definições de classe.
+ * Nele são definidos as funções para criação de classes, importação de módulos, e uma classe
+ * para criação de simples dicionários dentro do escopo das definições de classe.
  * @author {@link filipe.beck@gmail.com Filipe Beck}
- * @version 0.2
+ * @version 0.3
  */
 
 /**
@@ -12,27 +13,31 @@
  * @namespace Pulsar
  */
 Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
-{ // Imprime as mensagens de erro na área cliente do navegador
+{
+	var errorDescription = '';
+	// Imprime as mensagens de erro na área cliente do navegador
 	window.onerror = function(msg, url, line, col, error)
-	{
-		document.write(`
+	{ // Cache para mensagens antecessoras - o método 'write' pode apagá-las nos erros sucessores
+		errorDescription += `
 			<div style="margin-left:5%;margin-right:5%;margin-top:5%;border:solid 2px;border-color:rgb(64,0,0);background-color:rgb(255,128,128); padding:15px;">
 				<h1 style="word-wrap:break-word;font-size:12px;font-family:'arial';color:rgb(64,0,0);">${url} - line ${line}, col ${col}<br><br>${msg}</h1>
 			</div>
-		`);
+		`;
+		
+		document.write(errorDescription);
 	}
 	
 	/**
 	 * Utilizada na criação de simples dicionários dentro das definições de classe.
 	 * @class Dictionary
 	 * @augments Object
+	 * @param {object} descriptor O objeto com as propriedades a serem copiadas
 	 * @example
 	 *  
 	 * $('var').property = $.new(Dictionary, {
 	 *   a: 10, // value = this.property.a
 	 *   b: 20  // value = this.property.b
 	 * })
-	 *	@param {object} descriptor O objeto com as propriedades a serem copiadas
 	 */
 	Object.defineProperty(window, 'Dictionary', { value: function Dictionary(descriptor)
 	{ // Simplesmente copia
@@ -49,24 +54,20 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 	 * Importa o módulo especificado, se já não foi importado
 	 * @method $#import
 	 * @param {String} modulePath A URL do módulo. Se o módulo já foi importado, simplesmente retorna
-	 * @param {String} [namespace] O namespace para o módulo. Se não existir, será criado um
 	 * @example
 	 * $.import('MyClass.js') // var myClass = new MyClass()
-	 * $.import('YourClass.js', 'ns1.sub') // var yourClass = new ns1.sub.YourClass()
-	 * $.import('OurClass.js', 'ns1') // var ourClass = new ns1.OurClass()
 	 */
-	Object.defineProperty($, 'import', { value: function(modulePath, namespace)
-	{ // Cache para mais tarde recuperar o namespace atual se for especificado algum em particular
-		var originalNamespace = this.currentNamespace;
-		
-		if (namespace != undefined) this.namespace(namespace)
-		// Evita a adição de módulos já importados, imprimindo uma mensagem de aviso e retornando
-		if (this.currentNamespace[modulePath] != undefined) {
-			console.warn('The module \'' + modulePath + '\' was already imported'); return;
+	Object.defineProperty($, 'import', { value: function(modulePath)
+	{ // Estabelece a base relativa das URLs 
+		if (document.currentScript != this.currentScript)
+		{
+			this.currentScript = document.currentScript;
+			this.pathStack = this.currentScript.src.split('/');
+			this.pathStack.pop(); // Último elemento é o arquivo. Quermos apenas o diretório
 		}
 
 		var http = new XMLHttpRequest();
-
+		// TODO - Tratar erros
 		http.onreadystatechange = function ()
 		{
 			if (http.readyState !== XMLHttpRequest.DONE)
@@ -74,48 +75,36 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 			if (http.status !== 200)
 				console.log('$.import.http.status', http.status);
 		};
+		
+		var modulePathStack = modulePath.split('/');
+		// Recupera onome do arquivo
+		if (modulePathStack.length > 1)
+			modulePath = modulePathStack.pop();
+		// Evita a adição de módulos já importados, imprimindo uma mensagem de aviso e retornando
+		if (window[modulePath] != undefined) {
+			console.warn('The module \'' + modulePath + '\' was already imported'); return;
+		}
+		// Cache para URL base atual. Esta operação pode se tornar recursiva se o módulo importado também importar algum módulo
+		var originalPathStack = this.pathStack;
+		// Atualiza a base relativa das URLs
+		this.pathStack = this.pathStack.concat(modulePathStack);
+		// Recupera o caminho absoluto
+		modulePath = this.pathStack.join('/') + '/' + modulePath;
 
 		http.open('GET', modulePath, false); http.send();
 		// Interpreta o módulo
-		eval(http.responseText);
-		// Restaura o namespace
-		this.currentNamespace = originalNamespace;
+		eval.call(window, http.responseText);
+		// Restaura a base relativa das URLs
+		this.pathStack = originalPathStack;
 	}});
 	/**
-	 * Namespace atual. Escopo onde serão inseridas as clases definidas e módulos importados
-	 * @var {Object} $#currentNamespace
+	 * @var {Elemet} currentScript
 	 */
-	Object.defineProperty($, 'currentNamespace', { value: window, writable: true });
+	Object.defineProperty($, 'currentScript', { value: undefined, writable: true })
 	/**
-	 * Define o namespace atual. Todas as classes definidas e módulos importados serão inseridos no novo escopo
-	 * @method $#namespace
-	 * @param {String} newNamespace Novo namespace. Se não existir, será criado um.
-	 * @example
-	 * $.namespace('ns1')
-	 * $.import('MyClass') // var myClass = new ns1.MyClass()
-	 *
-	 * Pulsar.class('OurClass', Object, function($) // var ourClass = new ns1.OurClass()
-	 * {
-	 *   // definição...
-	 * })
+	 * @var {String[]} $#pathStack
 	 */
-	Object.defineProperty($, 'namespace', { value: function(newNamespace)
-	{ // Reparte
-		var namespaceTree = newNamespace.split('.');
-		// Escopo raiz
-		this.currentNamespace = window;
-		// Cria o namespace e os possíveis namespaces aninhados
-		for (var i in namespaceTree)
-		{ // Cache
-			var newNamespace = namespaceTree[i];
-			// Cria o namespace se ele não existir
-			if (this.currentNamespace[newNamespace] == undefined)
-				this.currentNamespace[newNamespace] = {};
-			// "Aninha"
-			this.currentNamespace = this.currentNamespace[newNamespace];
-		}
-	}});
-	
+	Object.defineProperty($, 'pathStack', { value: [], writable: true });
 	/** @var {Function} Pulsar~coreConstructors Todas as funções construtoras do núcleo. Utilizada para percorrer a árvore de inicialização */
 	var coreConstructors = {};
 	
@@ -142,7 +131,7 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 		this['constants'] = [];
 		
 		/**
-		 * Congela todas as propriedades (inclusiveas aninhadas) e depois deleta a função
+		 * Congela todas as propriedades (inclusive as aninhadas) e depois deleta a função
 		 * @method Pulsar~SelfDescriptor~close
 		 */
 		this.close = function()
@@ -167,8 +156,8 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 	};
 	
 	/**
-	 * Definição base para todas as classes criadas com o framework. Embora seja documentada como uma classe abstrata com membros de instância, isto deve ser
-	 * entendido em um contexto meta-linguístico. As classes criadas pelo framework com <b>Pulsar.class</b> podem ser vistas como uma
+	 * Definição base para todas as classes criadas com o framework. Embora seja documentada como uma classe abstrata com membros de instância,
+	 * isto deve ser entendido em um contexto meta-linguístico. As classes criadas pelo framework com <b>Pulsar.class</b> podem ser vistas como uma
 	 * instância de uma definição do núcleo. As propriedades serão aplicadas através de <b>CoreDefinition.call</b> em cada classe definida pelo programador,
 	 * e na classe <b>Object</b> durante a inicialização do framework (com Superclass = undefined, Superclasses = []).
 	 * @class Pulsar~CoreDefinition
@@ -431,6 +420,20 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 					else
 						return isInstance;
 				}
+				
+				var superMethod = function(superIndex, instance, theArguments)
+				{
+					var args = Array.prototype.slice.call(theArguments);
+					
+					return Superclasses[superIndex].prototype[args.shift()].apply(instance, args);
+				}
+				
+				this.prototype.super = function() { return superMethod(0, this, arguments); }
+				
+				for (var i = 0, count = this.Superclasses.length; i < count; i++)
+					this.prototype.super[this.Superclasses[i].name] = function() { return superMethod(i, this, arguments) };
+				
+				for (var i in this.Superclasses)
 
 				this.prototype.constructor = this;
 			}
@@ -568,12 +571,12 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 		var privateInstances = new WeakMap();
 		
 		/** @class Pulsar~PrivateDefinition */
-		var PrivateDefinition = function (){};
-		CoreDefinition.call(PrivateDefinition, Superclasses);
+		//var PrivateDefinition = function (){};
+		//CoreDefinition.call(PrivateDefinition, Superclasses);
 		
 		var CoreConstructor = undefined;
 		
-		var NewClass = $.currentNamespace[className] = eval(`(function ${className}()
+		var NewClass = window[className] = eval(`(function ${className}()
 		{
 			CoreConstructor(this);
 

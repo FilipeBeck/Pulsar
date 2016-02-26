@@ -1,0 +1,12 @@
+<document initialScene="INITIAL_SCENE">
+	<scene identifier="INITIAL_SCENE">
+		<view kind="MyView" controller="MyController">
+			<div kind="Control" keys="backgroundColor:'#ffxxbb'" relationships="frame:Rectangle(0.0,0.0,300.0,500.0)" actions="mouseup: buttonPressed" outlet="#av.myView"></div>
+		</view>
+		<navigation>
+		</navigation>
+		<connections>
+			<outlet id='div1' key="myData"></outlet>
+		</connections>
+	</scene>
+</document>

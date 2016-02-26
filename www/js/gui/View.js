@@ -1,5 +1,3 @@
-'use strict'
-
 function Point(x, y)
 {
 	this.x = x;
@@ -16,9 +14,9 @@ function Size(width, height)
 	Object.seal(this);
 }
 
-function Rectangle(args)
+function Rectangle()
 {
-	var args = arguments;
+	var args = Array.prototype.slice.call(arguments);
 	
 	if (args.length == 2)
 	{
@@ -28,7 +26,7 @@ function Rectangle(args)
 	else
 	{
 		this.origin = new Point(args[0], args[1]);
-		this.size = new Rectangle(args[2], args[3]);
+		this.size = new Size(args[2], args[3]);
 	}
 	
 	Object.seal(this);
@@ -48,6 +46,7 @@ Pulsar.class('View', Object, function($)
 	var commumStyle = document.createElement('style');
 	commumStyle.innerHTML = `
 		* { box-sizing: border-box; }
+		body { margin: 0 }
 		iframe { border: none; }`
 	document.head.appendChild(commumStyle);
 	
@@ -60,7 +59,9 @@ Pulsar.class('View', Object, function($)
 	 * @var {Element} View#node Elemento
 	 * @private
 	 */
-	$('private var').node = undefined;
+	$('cached var').node = {
+		get: function() { return $(this).node }
+	}
 	/**
 	 * @var {Element} View#layer Div contenedor de todos os elementos quando houver um canvas
 	 * @private
@@ -73,9 +74,9 @@ Pulsar.class('View', Object, function($)
 	$('private var').canvas = undefined;
 	
 	/** @var {View} View#superview */
-	$('var').superview = {
+	$('cached var').superview = {
 		get: function() { return $(this).superview; }
-	}; $('private var').superview = undefined;
+	};
 	
 	/** @var {View[]} View#subviews Todos os views filhos (Um para cada <b>node</b>) */
 	$('cached var').subviews = {
@@ -98,7 +99,19 @@ Pulsar.class('View', Object, function($)
 			
 			return $(this).subviews;
 		} // Escopo privado
-	};// $('private var').subviews = undefined;
+	};
+	
+	$().addSubview = function(subview)
+	{
+		$(subview).superview = this;
+		$(this).node.appendChild($(subview).node);
+	}
+	
+	$().removeFromSuperview = function()
+	{
+		$(this).superview.node.removeChild(this.node);
+		$(this).superview = null;
+	}
 	
 	/** */
 	$('private').createLayer = function()
@@ -204,7 +217,7 @@ Pulsar.class('View', Object, function($)
 	 * @constructs View
 	 * @param {Element} Referência ao elemento
 	 */
-	$().init = function(node)
+	$().init = function(node, frame)
 	{
 		if (node.view != undefined) return node.view;
 		
@@ -218,6 +231,8 @@ Pulsar.class('View', Object, function($)
 			node.style.position = 'relative';
 		
 		$(this).node = node;
+		
+		if (frame != undefined) this.frame = frame;
 	}
 	
 	/**
@@ -225,18 +240,18 @@ Pulsar.class('View', Object, function($)
 	 * @method View.new
 	 * @param {string} name Nome do elemento a ser criado
 	 */
-	$('static').new = function(name)
+	$('static').create = function(name)
 	{
-		this.init(document.createElement(name));
+		return new View(document.createElement(name));
 	}
 	
 	/**
 	 *
 	 */
 	$('static').animate = function(duration, block, finish)
-	{
+	{	
 		var sheet = document.styleSheets[0];
-		
+
 		if (sheet.insertRule)
 			sheet.insertRule(`.pulsar-gui-view { transition: ${duration}s; transform: translation3d(0,0,0); }`);
 		else
@@ -244,7 +259,6 @@ Pulsar.class('View', Object, function($)
 		
 		document.addEventListener('transitionend', function listener(event)
 		{ 
-			console.log('transitionend', event);
 			sheet.removeRule('.pulsar-gui-view');
 			document.removeEventListener('transitionend', listener, true);
 			window.setTimeout(finish, 0.0);

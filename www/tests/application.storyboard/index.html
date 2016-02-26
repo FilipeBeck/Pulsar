@@ -5,12 +5,7 @@
 		<title> Eu sou um iFrame </title>
 	</head>
 	
-	<body data-controller="MyController">
-		<div data-class="View" data-outlet="view1">
-			<button data-class="View" data-action="mouseup:buttonReleased mousedown:buttonPressed"> BUTTON </button>
-			<button data-class="View" data-action="mouseup:buttonReleased mousedown:buttonPressed"> BUTTON 2 </button>
-		</div>
-		<a href="myFrame2.html"> TESTE </a>
+	<body data-controller="NavigationController{indexIdentifier:myFrame2}">
 	</body>
 	
 </html>
