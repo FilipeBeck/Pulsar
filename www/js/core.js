@@ -23,7 +23,8 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 				<h1 style="word-wrap:break-word;font-size:12px;font-family:'arial';color:rgb(64,0,0);">${url} - line ${line}, col ${col}<br><br>${msg}</h1>
 			</div>
 		`;
-		
+		// Limpa o corpo do documento
+		document.body.innerHTML = '';
 		document.write(errorDescription);
 	}
 	
@@ -62,7 +63,7 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 	 * $.import('MyClass.js') // var myClass = new MyClass()
 	 */
 	Object.defineProperty($, 'import', { value: function(modulePath)
-	{ // Estabelece a base relativa das URLs 
+	{ // Estabelece a base relativa das URLs
 		if (document.currentScript != this.currentScript)
 		{
 			this.currentScript = document.currentScript;
@@ -71,14 +72,6 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 		}
 
 		var http = new XMLHttpRequest();
-		// TODO - Tratar erros
-		http.onreadystatechange = function ()
-		{
-			if (http.readyState !== XMLHttpRequest.DONE)
-				console.log('$.import.http.readyState', http.readyState);
-			if (http.status !== 200)
-				console.log('$.import.http.status', http.status);
-		};
 		
 		var modulePathStack = modulePath.split('/');
 		// Recupera onome do arquivo
@@ -96,8 +89,11 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 		this.pathStack = this.pathStack.concat(modulePathStack);
 		// Recupera o caminho absoluto
 		modulePath = this.pathStack.join('/') + '/' + modulePath;
-
+		
 		http.open('GET', modulePath, false); http.send();
+		// Gera um erro em caso de conteúdo vazio
+		if (http.responseText == '')
+			throw new Error(`Error importing module ${modulePath}`);
 		// Interpreta o módulo
 		eval.call(window, http.responseText);
 		// Restaura a base relativa das URLs
