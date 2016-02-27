@@ -50,6 +50,10 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 	 * @namespace $
 	 */
 	Object.defineProperty(window, '$', { value: {} });
+	/** @var {Elemet} $#currentScript */
+	Object.defineProperty($, 'currentScript', { value: undefined, writable: true })
+	/** @var {String[]} $#pathStack */
+	Object.defineProperty($, 'pathStack', { value: [], writable: true });
 	/**
 	 * Importa o módulo especificado, se já não foi importado
 	 * @method $#import
@@ -63,7 +67,7 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 		{
 			this.currentScript = document.currentScript;
 			this.pathStack = this.currentScript.src.split('/');
-			this.pathStack.pop(); // Último elemento é o arquivo. Quermos apenas o diretório
+			this.pathStack.pop(); // Último elemento é o arquivo. Queremos apenas o diretório
 		}
 
 		var http = new XMLHttpRequest();
@@ -80,8 +84,10 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 		// Recupera onome do arquivo
 		if (modulePathStack.length > 1)
 			modulePath = modulePathStack.pop();
+		// Nome do módulo sem a extensão
+		var className = modulePath.split('.')[0];
 		// Evita a adição de módulos já importados, imprimindo uma mensagem de aviso e retornando
-		if (window[modulePath] != undefined) {
+		if (window[className] != undefined) {
 			console.warn('The module \'' + modulePath + '\' was already imported'); return;
 		}
 		// Cache para URL base atual. Esta operação pode se tornar recursiva se o módulo importado também importar algum módulo
@@ -97,14 +103,7 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 		// Restaura a base relativa das URLs
 		this.pathStack = originalPathStack;
 	}});
-	/**
-	 * @var {Elemet} currentScript
-	 */
-	Object.defineProperty($, 'currentScript', { value: undefined, writable: true })
-	/**
-	 * @var {String[]} $#pathStack
-	 */
-	Object.defineProperty($, 'pathStack', { value: [], writable: true });
+	
 	/** @var {Function} Pulsar~coreConstructors Todas as funções construtoras do núcleo. Utilizada para percorrer a árvore de inicialização */
 	var coreConstructors = {};
 	
