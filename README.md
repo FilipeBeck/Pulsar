@@ -12,7 +12,7 @@ Pulsar.class('Point', Object, function($)
   // Construtor
   $().init = function(x, y)
   {
-		this.x = x;
+    this.x = x;
     this.y = y;
   }
 
@@ -36,7 +36,7 @@ Pulsar.class('Vectorial', Object, function($)
       return Math.cos(angle) * mod;
     }
   }
-	$('public var').dy = {
+  $('public var').dy = {
     get: function {
       return Math.sin(angle) * mod;
     }
@@ -57,3 +57,4 @@ Pulsar.class('Particle', Point, Vectorial, function($)
 
 var particle = new Particle(10.0, 20.0, 5.0, Math.PI / 4.0);
 ```
+Documentação: [http://quasar.site11.com/pulsar/index.html]
