@@ -1,49 +1,54 @@
 $.import('ViewController.js');
 
 Pulsar.class('NavigationController', ViewController, function($)
-{
-	$('var').indexIdentifier = null;
+{	
+	$('let').controllers = $.new(Array);
 	
-	$('var').rootScene = {
-		get: function(){ return this.scenes[0]; }
+	$('var').connections = null;
+	
+	$('var').rootController = {
+		get: function() { return this.controllers[0]; }
 	}
 	
-	$('var').topScene = {
-		get: function(){ return this.scenes[this.scenes.length - 1]; }
+	$('var').topController = {
+		get: function() { return this.controllers[this.controllers.length - 1]; }
 	}
 	
-	$('var').scenes = $.new(Array);
+	$('cached var').navigationBar = {
+		get: function() { return $(this).navigationBar; }
+	}
 	
 	$().viewDidLoad = function()
 	{
-		this.view.node.style.position = 'absolute';
+		this.view.node.style['display'] = 'flex';
+		this.view.node.style['flex-direction'] = 'column';
+		this.view.node.style['width'] = '100%';
+		this.view.node.style['height'] = '100%';
+
+		$(this).navigationBar = new View(document.createElement('div'));
+		$(this).navigationBar.node.style.height = '30px';
+		$(this).navigationBar.node.style['background-color'] = '#22aaff';
 		
-		var self = this;
+		this.view.addSubview($(this).navigationBar);
 		
-		this.scenes.push(this.storyboard.instantiateSceneWithIdentifier(this.indexIdentifier, this.view, function(controller){
-			controller.navigationController = self;
-		}));
+		var rootController = this.storyboard.instantiateSceneWithIdentifier(this.connections.querySelector('root').getAttribute('identifier'));
+		
+		this.pushController(rootController);
+		
+		rootController.parentController = this;
 	}
 	
-	$().pushScene = function(scene)
+	$().pushController = function(controller)
 	{
+		if (this.topController)
+			this.topController.view.removeFromSuperview();
 		
-	}
-	
-	$().performSegue = function(identifier, sender)
-	{
-		var self = this;
+		controller.view.node.style.width = '100%';
+		controller.view.node.style.flex = 1;
 		
-		var currentScene = this.topScene;
-		currentScene.node.style.position = 'absolute';
+		this.view.addSubview(controller.view);
+		this.controllers.push(controller);
 		
-		this.scenes.push(this.storyboard.instantiateSceneWithIdentifier(identifier, this.view, function(controller){
-			controller.navigationController = self;
-			View.animate(1.0, function(){
-				currentScene.node.style.left = 20.0;
-			}, function(){
-				currentScene.removeFromSuperview();
-			});
-		}));
+		controller.parentController = this;
 	}
 })

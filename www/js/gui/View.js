@@ -38,7 +38,7 @@ function Rectangle()
  * @param {Element} node Referência ao elemento
  */
 Pulsar.class('View', Object, function($)
-{ 
+{
 	/**
 	 * @var {Object} View.styles Estilos
 	 * @private
@@ -109,7 +109,7 @@ Pulsar.class('View', Object, function($)
 	
 	$().removeFromSuperview = function()
 	{
-		$(this).superview.node.removeChild(this.node);
+		$(this).superview.node.removeChild($(this).node);
 		$(this).superview = null;
 	}
 	
@@ -218,9 +218,7 @@ Pulsar.class('View', Object, function($)
 	 * @param {Element} Referência ao elemento
 	 */
 	$().init = function(node, frame)
-	{
-		if (node.view != undefined) return node.view;
-		
+	{	
 		node.view = this;
 		node.className = 'pulsar-gui-view ' + node.className;
 		node.setAttribute('data-class', this.constructor.name);
@@ -235,6 +233,11 @@ Pulsar.class('View', Object, function($)
 		if (frame != undefined) this.frame = frame;
 	}
 	
+	$().unload = function()
+	{
+		alert(this.node);
+	}
+	
 	/**
 	 * Cria um view com um novo elemento
 	 * @method View.new
@@ -243,6 +246,34 @@ Pulsar.class('View', Object, function($)
 	$('static').create = function(name)
 	{
 		return new View(document.createElement(name));
+	}
+	
+	$().setupWithCoder = function(coder)
+	{
+		var data = coder.evalData('keys');
+		
+		for (var key in data)
+			this[key] = data[key];
+		
+		var controller = coder.controller;
+		
+		var events = coder.listData('events');
+		
+		for (var key in events)
+			$(this).node.addEventListener(key, controller[events[key]].bind(controller, this));
+		
+		var segue = coder.rawData('segue')
+		
+		if (segue)
+		{	
+			var self = this;
+			
+			$(this).node.addEventListener('mouseup', function(event){
+				controller.performSegue(segue, self);
+			});
+		}
+		
+		return Coder.CHILDREN_NOT_PROCCESSED;
 	}
 	
 	/**
@@ -268,8 +299,8 @@ Pulsar.class('View', Object, function($)
 	}
 	
 	/**
-	 * Desenha
+	 * Desenha o view no canvas.
 	 * @method View#draw
 	 */
-	$().draw = function(size) {}
+	$().draw = $.ABSTRACT_METHOD;
 })

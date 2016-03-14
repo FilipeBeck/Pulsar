@@ -94,12 +94,12 @@
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
 				<script type="text/javascript" src="js/core.js"></script>
-				<script type="text/javascript" src="js/gui/View.js"></script>
-				<script type="text/javascript" src="js/controllers/Application.js"></script>
 			
 				<div id="container" class="co">
 					<div id="aView"> Pulsar Transitation Text </div>
 					<script>
+						$.import('js/gui/View.js');
+						$.import('js/controllers/Application.js');
 						
 						var view = new View(document.getElementById('container'));
 						
