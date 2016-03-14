@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<title> Testes </title>
+		<script src="js/core.js"></script>
+		<script>
+			/** Troque pelo arquivo de teste desejado */
+			var SRC = 'storyboard_test';
+			
+			function init()
+			{
+				var testFileURL = `tests/${SRC}.js`;
+				var scriptElement = document.createElement('script');
+				scriptElement.src = `tests/${SRC}.js`;
+				
+				document.head.appendChild(scriptElement);
+				document.head.querySelector('title').innerHTML = `Testando '${testFileURL}'`;
+			}
+		</script>
+	</head>
+	
+	<body onload="init()"></body>
+</html>
