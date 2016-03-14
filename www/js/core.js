@@ -56,18 +56,21 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 	/** @var {String[]} $#pathStack */
 	Object.defineProperty($, 'pathStack', { value: [], writable: true });
 	/**
-	 * Importa o módulo especificado, se já não foi importado
+	 * Importa o módulo especificado, se já não foi importado. Para essa função trabalhar adequadamente, é necessário que o módulo contenha
+	 * apenas uma classe, e com o mesmo nome do arquivo (sem a extensão).
 	 * @method $#import
 	 * @param {String} modulePath A URL do módulo. Se o módulo já foi importado, simplesmente retorna
+	 * @param {String} baseType Base para a procura do módulo. Pode ser 'relative' (relativo ao módulo atual - default, se não for especificado) ou
+	 * 'absolute' (relativo ao index).
 	 * @example
 	 * $.import('MyClass.js') // var myClass = new MyClass()
 	 */
-	Object.defineProperty($, 'import', { value: function(modulePath)
+	Object.defineProperty($, 'import', { value: function(modulePath, baseType)
 	{ // Estabelece a base relativa das URLs
 		if (document.currentScript != this.currentScript)
 		{
 			this.currentScript = document.currentScript;
-			this.pathStack = this.currentScript.src.split('/');
+			this.pathStack = (document.currentScript != null) ? this.currentScript.src.split('/') : [];
 			this.pathStack.pop(); // Último elemento é o arquivo. Queremos apenas o diretório
 		}
 
@@ -75,8 +78,7 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 		
 		var modulePathStack = modulePath.split('/');
 		// Recupera onome do arquivo
-		if (modulePathStack.length > 1)
-			modulePath = modulePathStack.pop();
+		modulePath = modulePathStack.pop();
 		// Nome do módulo sem a extensão
 		var className = modulePath.split('.')[0];
 		// Evita a adição de módulos já importados, imprimindo uma mensagem de aviso e retornando
@@ -86,11 +88,25 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 		// Cache para URL base atual. Esta operação pode se tornar recursiva se o módulo importado também importar algum módulo
 		var originalPathStack = this.pathStack;
 		// Atualiza a base relativa das URLs
+		if (baseType != undefined)
+		{
+			switch (baseType)
+			{
+				case 'absolute': this.pathStack = []; break;
+				case 'relative': break;
+					
+				default:
+					throw new Error(`Unrecognized identifier '${baseType}' for 'baseType' argument on ${modulePath} import`);
+			}
+		}
+		
 		this.pathStack = this.pathStack.concat(modulePathStack);
 		// Recupera o caminho absoluto
 		modulePath = this.pathStack.join('/') + '/' + modulePath;
 		
-		http.open('GET', modulePath, false); http.send();
+		http.open('GET', modulePath, false);
+		http.setRequestHeader('Accept', 'text/plain');
+		http.send();
 		// Gera um erro em caso de conteúdo vazio
 		if (http.responseText == '')
 			throw new Error(`Error importing module ${modulePath}`);
@@ -126,7 +142,7 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 		this['constants'] = [];
 		
 		/**
-		 * Congela todas as propriedades (inclusive as aninhadas) e depois deleta a função
+		 * Congela todas as propriedades (inclusive as aninhadas) e deleta a função
 		 * @method Pulsar~SelfDescriptor~close
 		 */
 		this.close = function()
@@ -426,9 +442,7 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 				this.prototype.super = function() { return superMethod(0, this, arguments); }
 				
 				for (var i = 0, count = this.Superclasses.length; i < count; i++)
-					this.prototype.super[this.Superclasses[i].name] = function() { return superMethod(i, this, arguments) };
-				
-				for (var i in this.Superclasses)
+					this.prototype.super[this.Superclasses[i].name] = eval(`(function() { return superMethod(${i}, this, arguments); })`);
 
 				this.prototype.constructor = this;
 			}
@@ -706,7 +720,7 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 					}break;
 					// Token desconhecido
 					default:
-						throw new SyntaxError('Unexpected token \'' + token + '\' on \'' + className + '.'  + identifier + '\' definition');
+						throw new SyntaxError('Unexpected identifier \'' + token + '\' on \'' + className + '.'  + identifier + '\' definition');
 				}
 			}
 			// Exige que as propriedades possuam o descritor 'var' or 'let'
@@ -743,7 +757,7 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 				if (descriptor[instanceOrStatic][propertyOrMethod][i] == identifier)
 					throw new SyntaxError('Duplicated identifier \'' + identifier + '\' in \'' + className + '.' + identifier + '\' definition');
 			// Tudo Ok. Agora apenas formata a definição
-			if (checkList['let']) { // Propriedade armazenada e constante
+			if (checkList['let'] && !checkList['static']) { // Propriedade armazenada e constante
 				definition = { value: content, writable: true }; descriptor['constants'].push(identifier);
 			}
 			else if (content == undefined || content == null)
