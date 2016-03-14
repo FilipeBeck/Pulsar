@@ -50,8 +50,8 @@ Pulsar.class('Particle', Point, Vectorial, function($)
 {
   $().init = function (x, y, mod, angle)
   {
-    this.super('Point', x, y);
-    this.super('Vectorial', mod, angle);
+    this.super.Point('init', x, y);
+    this.super.Vectorial('init', mod, angle);
   }
 }
 
