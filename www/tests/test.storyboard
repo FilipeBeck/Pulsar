@@ -1,0 +1,35 @@
+<document>
+	
+	<scene id="index" controller="NavigationController">
+		<view data-kind="RootView">
+		</view>
+		<connections>
+			<root identifier="scene1"></root>
+		</connections>
+	</scene>
+	
+	<scene id="scene1" controller="MyController">
+		<navigationItem>
+		</navigationItem>
+		<view data-kind="MyView" data-keys="backgroundColor:'#00aabb'">
+			<div data-kind="View" data-keys="backgroundColor:'#ffaabb', clipsToBounds:true, frame: new Rectangle(0.0,0.0,100.0,300.0)" data-events="mouseup :buttonPressed" data-outlet="myView" data-segue="scene2">
+			TEXTO!!!
+			</div>
+		</view>
+		<connections>
+			<!--<outlet id='div1' key="myData"></outlet>-->
+			<segue identifier="scene2"></segue>
+		</connections>
+	</scene>
+
+	<scene id="scene2" controller="YourController">
+		<navigationItem>
+		</navigationItem>
+		<view data-kind="YourView" data-keys="backgroundColor:'#aa4477'">
+			<div data-kind="View" data-keys="backgroundColor:'#55aabb', clipsToBounds:true, frame: new Rectangle(0.0,0.0,150.0,400.0)" data-events="mouseup :buttonPressed" data-outlet="myView" data-segue="scene1">
+			MAIS TEXTO!!! IEIEIE!!
+			</div>
+		</view>
+	</scene>
+	
+</document>
