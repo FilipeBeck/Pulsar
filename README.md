@@ -3,28 +3,28 @@ Biblioteca para criação de classes em Javascript, com suporte a heraça múlti
 
 ## Exemplo
 ```Javascript
-Pulsar.class('Point', Object, function($)
+Pulsar.class('Point', function($)
 { 
   // Propriedade pública (default), armazenada e variável
   $('public var').x = 0.0;
   $('public var').y = 0.0;
   
   // Construtor
-  $().init = function(x, y)
+  $('func').init = function(x, y)
   {
     this.x = x;
     this.y = y;
   }
 
   // Método público e de instância
-  $('public').move = function(x,y)
+  $('func').move = function(x,y)
   {
     this.x = x;
     this.y = y;
   }
 })
 
-Pulsar.class('Vectorial', Object, function($)
+Pulsar.class('Vectorial', function($)
 {
   // Propriedade pública e armazenada
   $('public var').mod = 0.0;
@@ -43,15 +43,15 @@ Pulsar.class('Vectorial', Object, function($)
   }
 
   // Construtor
-  $().init = function(mod, angle) { ... }
+  $('func').init = function(mod, angle) { ... }
 })
 
-Pulsar.class('Particle', Point, Vectorial, function($)
+Pulsar.class('Particle', 'Point', 'Vectorial', function($)
 {
   $().init = function (x, y, mod, angle)
   {
-    this.super.Point('init', x, y);
-    this.super.Vectorial('init', mod, angle);
+    this.super('Point', 'init', x, y);
+    this.super('Vectorial', 'init', mod, angle);
   }
 }
 
