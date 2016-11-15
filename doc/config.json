@@ -1,0 +1,31 @@
+{
+	"tags": {
+		"allowUnknownTags": true,
+		"dictionaries": ["jsdoc","closure"]
+	},
+	"source": {
+		"include": [
+			"../www/pulsar/core.js",
+			"../www/pulsar/gui",
+			"../www/pulsar/controllers",
+			"../www/pulsar/models"
+		],
+		"includePattern": ".+\\.js(doc)?$",
+		"excludePattern": "(^|\\/|\\\\)_"
+	},
+	"plugins": [],
+	"templates": {
+		"default": {
+			"staticFiles": {
+				"include": ["./resources"]
+			},
+			"layoutFile": "./resources/layout.tmpl"
+		},
+		"cleverLinks": false,
+		"monospaceLinks": false
+	},
+	"opts": {
+		"recurse": true,
+		"encoding": "utf8"
+	}
+}

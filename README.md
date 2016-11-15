@@ -4,11 +4,11 @@ Biblioteca para criação de classes em Javascript, com suporte a heraça múlti
 ## Exemplo
 ```Javascript
 Pulsar.class('Point', function($)
-{ 
+{
   // Propriedade pública (default), armazenada e variável
   $('public var').x = 0.0;
   $('public var').y = 0.0;
-  
+
   // Construtor
   $('func').init = function(x, y)
   {
@@ -57,4 +57,4 @@ Pulsar.class('Particle', 'Point', 'Vectorial', function($)
 
 var particle = new Particle(10.0, 20.0, 5.0, Math.PI / 4.0);
 ```
-Documentação: [http://quasar.site11.com/pulsar/index.html]
+Documentação: [http://quasar.site11.com/pulsar/doc/]

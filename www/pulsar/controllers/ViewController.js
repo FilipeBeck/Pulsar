@@ -44,7 +44,7 @@ Pulsar.class('ViewController', function($)
 	/** @var {Object} ViewController#navigationItem Item com conteúdo a ser exibido na barra de navegação, se houver */
 	$('var').navigationItem = null
 
-	/** @var {Element[]} connections Conexões com outras cenas */
+	/** @var {Element[]} ViewController#connections Conexões com outras cenas */
 	$('var').connections = null
 
 	/**

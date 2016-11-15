@@ -1,0 +1,56 @@
+* {
+	color: #112244;
+}
+
+code {
+	color: #CD6666;
+}
+
+a, a:visited {
+	color: #3366CC
+}
+
+h4.name + div.description + h5 {
+	height: 0px;
+	margin: 0px;
+	overflow: hidden;
+}
+
+h4.name + div.description + h5 + ul {
+	height: 0px;
+	margin: 0px;
+	overflow: hidden;
+}
+
+/*article h4.name {
+	cursor: pointer;
+}
+
+article div.description + h5 {
+	margin: 0px;
+	padding: 0px;
+}
+
+article div.description + h5 + ul {
+	visibility: hidden;
+	height: 0px;
+	margin: 0px;
+	padding: 0px;
+}
+
+article div.description + h5 + ul + dl.details {
+	margin-top: 0px
+}
+
+table {
+	display: block;
+}
+
+.collapsed {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+dl.collapsed {
+	margin-bottom: 15px;
+}*/

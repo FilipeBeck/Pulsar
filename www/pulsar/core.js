@@ -879,12 +879,12 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 	  *   }
 	  *
 	  *   // Construtor
-	  *   $().init = function(args...)
+	  *   $('func').init = function(args...)
 	  *   {
 	  *
 	  *   }
 	  *   // Método público
-	  *   $().sum = function()
+	  *   $('func').sum = function()
 	  *   {
 	  *     var v1 = this.a // Acesso a membro público
 	  *     var v2 = $(this).b // Acesso a membro privado
