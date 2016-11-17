@@ -58,3 +58,5 @@ Pulsar.class('Particle', 'Point', 'Vectorial', function($)
 var particle = new Particle(10.0, 20.0, 5.0, Math.PI / 4.0);
 ```
 Documentação: [http://quasar.site11.com/pulsar/doc/]
+
+Dependencia utilizada pelas animações em JS: Bezier.js [https://github.com/Pomax/bezierjs]
