@@ -645,7 +645,6 @@ Pulsar.class('View', function($)
 	/**
 		Efetua uma transição animada via JavaScript ou CSS.
 		@method View#transit
-		@private
 		@param {Object} options Configuração da animação - duração, timingFunction, ...
 		@param {Object} properties Propriedades a serem animadas.
 		@param {?Function} completionHandler Executado no final da transição.

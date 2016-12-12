@@ -315,7 +315,7 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 			}
 		}})
 
-		/** @const {HTMLDivElement} Factory~progressBar Barra de progresso exibida no topo durante as importações ocorridas após o documento ser carregado. */
+		/** @const {HTMLDivElement} Factory~activityIndicator Indicador de atividade exibido durante as importações ocorridas após o documento ser carregado. */
 		const activityIndicator = document.createElement('div')
 		// Sempre no topo e acima dos outros views
 		activityIndicator.setAttribute('style', `display: block; position: fixed; left: -5px; top: -5px; width: 10px; height: 10px; border-radius: 5px; box-shadow: 0px 0px 3px #00AA55; z-index: ${Number.MAX_SAFE_INTEGER}; background: linear-gradient(to right, #00AA55, #359ec8); animation: progress-bar 0.5s ease-in-out 0s infinite alternate; transform: scale(5,5); transition: all 0.5s; opacity: 0`)
@@ -938,6 +938,24 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 
 		var descriptors = core.descriptors
 
+		function getExclusiveToken(tokens)
+		{
+			let definedToken = null;
+
+			for (let i = 0, count = tokens.length; i < count; i++)
+			{
+				let token = tokens[i];
+
+				if (checkList[token])
+					if (definedToken)
+						throw new SyntaxError(`'${definedToken}' statement incompatible with '${token}' in '${className}.${identifier}' definition`);
+					else
+						definedToken = token;
+			}
+
+			return definedToken;
+		}
+
 		for (let i in core.definitions)
 		{
 			var definition = core.definitions[i]; // Cache
@@ -964,24 +982,6 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 				'func': 0,
 				'override': 0
 			};
-
-			function getExclusiveToken(tokens)
-			{
-				let definedToken = null;
-
-				for (let i = 0, count = tokens.length; i < count; i++)
-				{
-					let token = tokens[i];
-
-					if (checkList[token])
-						if (definedToken)
-							throw new SyntaxError(`'${definedToken}' statement incompatible with '${token}' in '${className}.${identifier}' definition`);
-						else
-							definedToken = token;
-				}
-
-				return definedToken;
-			}
 
 			for (let i = 0, count = tokens.length; i < count; i++)
 			{
