@@ -36,38 +36,47 @@ Pulsar.class('BorderBox', 'View', function($)
   $.initialization = function()
   {
     View.insertCSSRules({
-      '.pulsar-gui-border-box': {
+      '.ps-border-box': {
         'display': 'flex',
         'flex-flow': 'column',
-        'align-items': 'stretch'
-      },
-      '.pulsar-gui-border-box *': {
-        'vertical-align': 'middle'
-      },
-      '.pulsar-gui-border-box .top': {
-        'flex': 1,
-        'order': 1
-      },
-      '.pulsar-gui-border-box .content-view': {
-        'display': 'flex',
-        'flex': 4,
-        'order': 2
-      },
-      '.pulsar-gui-border-box .bottom': {
-        'flex': '1',
-        'order': 3
-      },
-      '.pulsar-gui-border-box > .content-view .left': {
-        'flex': '1 20%',
-        'order': 1,
-      },
-      '.pulsar-gui-border-box > .content-view .center': {
-        'flex': '4 1 80%',
-        'order': 2
-      },
-      '.pulsar-gui-border-box > .content-view .right': {
-        'flex': '1 1 20%',
-        'order': 3
+        'align-items': 'stretch',
+        // Subviews
+        '*': {
+          'vertical-align': 'middle'
+        },
+        '.top': {
+          'flex': 1,
+          'order': 1,
+          'z-index': 1
+        },
+        // Conteúdo central
+        '.content-view': {
+          'display': 'flex',
+          'align-items': 'stretch',
+          'flex': 4,
+          'order': 2,
+          'z-index': 0,
+          // Subviews
+          '.left': {
+            'flex': '1 20%',
+            'order': 1,
+            'z-index': 1
+          },
+          '.center': {
+            'flex': '4 1 80%',
+            'order': 2
+          },
+          '.right': {
+            'flex': '1 1 20%',
+            'order': 3,
+            'z-index': 1
+          }
+        },
+        '.bottom': {
+          'flex': '1',
+          'order': 3,
+          'z-index': 1
+        }
       }
     })
   }
@@ -91,7 +100,7 @@ Pulsar.class('BorderBox', 'View', function($)
   $('func').init = function()
   {
     this.super(View, 'init', ...arguments)
-    this.addClassName('pulsar-gui-border-box')
+    //this.addClassName('pulsar-gui-border-box')
 
     this.addSubview(this.top)
     this.addSubview(this.bottom)

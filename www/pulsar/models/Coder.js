@@ -30,11 +30,14 @@
 */
 Pulsar.class('Coder', function($)
 {
+	/** @const {Integer} Coder.CHILDREN_NOT_PROCCESSED Identifica o não processamento dos subelementos */
+	$('static let').CHILDREN_NOT_PROCCESSED = 0
+
 	/** @const {Integer} Coder.CHILDREN_WAS_PROCCESSED Identifica o processamento dos subelementos. */
 	$('static let').CHILDREN_WAS_PROCCESSED = 1
 
-	/** @const {Integer} Coder.CHILDREN_NOT_PROCCESSED Identifica o não processamento dos subelementos */
-	$('static let').CHILDREN_NOT_PROCCESSED = 0
+	/***/
+	$('static let').DESTROY = 2
 
 	/** @var {Element} Coder#element Elemento xml a ser processado */
 	$('var').element = undefined
@@ -80,12 +83,12 @@ Pulsar.class('Coder', function($)
 	/**
 		Decodifica o atributo especificado através de `eval`. Os valores devem ser separados por vírgula, e os caracteres '{' e '}' serão inseridos automaticamente no inicio e no fim da string.
 		@method Coder#evalData
-		@param {String} attr Sufixo do nome do atributo a ser decodificado. A string 'data-' será automaticamente prefixada ao valor.
+		@param {String} attr Sufixo do nome do atributo a ser decodificado. A string 'ps-' será automaticamente prefixada ao valor.
 		@returns {Object} O objeto decodificado, ou um objeto vazio se o atributo não existir.
 	*/
 	$('func').evalData = function(attr)
 	{
-		let completeName = 'data-' + attr
+		let completeName = 'ps-' + attr
 
 		return (this.element.hasAttribute(completeName)) ? eval('({' + this.element.getAttribute(completeName) + '})') : {}
 	}
@@ -93,12 +96,12 @@ Pulsar.class('Coder', function($)
 	/**
 		Decodifica o atributo especificado em formato JSON através de `JSON.parse`. Os valores devem ser separados por vírgula, e os caracteres '{' e '}' serão inseridos automaticamente no início e no fim da string
 		@method Coder#jsonData
-		@param {String} attr Sufixo do nome do atributo a ser decodificado. A srting 'data-' será automaticamente prefixada ao valor
+		@param {String} attr Sufixo do nome do atributo a ser decodificado. A srting 'ps-' será automaticamente prefixada ao valor
 		@returns {Object} O objeto decodificado, ou um objeto vazio se o atributo não existir.
 	*/
 	$('func').jsonData = function(attr)
 	{
-		let completeName = 'data-' + attr
+		let completeName = 'ps-' + attr
 
 		return (this.element.hasAttribute(completeName)) ? JSON.parse('{' + this.element.getAttribute(completeName) + '}') : {}
 	}
@@ -106,16 +109,16 @@ Pulsar.class('Coder', function($)
 	/**
 		Decodifica o atributo especificado como um dicionário de strings. Os valores devem ser separados por vírgula, e os caracteres '{' e '}' serão inseridos automaticamente no início e no fim da string
 		@method Coder#listData
-		@param {String} attr Sufixo do nome do atributo a ser decodificado. A srting 'data-' será automaticamente prefixada ao valor
+		@param {String} attr Sufixo do nome do atributo a ser decodificado. A srting 'ps-' será automaticamente prefixada ao valor
 		@returns {Object} O objeto decodificado, ou um objeto vazio se o atributo não existir.
 	*/
 	$('func').listData = function(attr)
 	{
-		let completeName = 'data-' + attr
+		let completeName = 'ps-' + attr
 		let list = {}
 
 		if (this.element.hasAttribute(completeName)) {
-			let lines = this.element.getAttribute('data-' + attr).split(',')
+			let lines = this.element.getAttribute('ps-' + attr).split(',')
 
 			for (let i = 0, count = lines.length; i < count; i++) {
 				let line = lines[i]
@@ -133,12 +136,12 @@ Pulsar.class('Coder', function($)
 	/**
 		Retorna o valor bruto do atributo especificado.
 		@method Coder#rawData
-		@param {String} attr Sufixo do nome do atributo. A string 'data-' será automaticamente prefixada ao valor
+		@param {String} attr Sufixo do nome do atributo. A string 'ps-' será automaticamente prefixada ao valor
 		@returns {String} O valor do atributo, ou uma string vazia se o atributo não existir.
 	*/
 	$('func').rawData = function(attr)
 	{
-		return this.element.getAttribute('data-' + attr) || ''
+		return this.element.getAttribute('ps-' + attr) || ''
 	}
 
 	/**
@@ -184,11 +187,8 @@ Pulsar.class('Coder', function($)
 			let newNode = document.createElement(nameForTag || this.element.tagName)
 			let proccessChildren = true
 			// Se possui classe, cria a instância e delega o setup
-			if (this.element.hasAttribute('data-kind')) {
-				let newView = new window[this.element.getAttribute('data-kind')](newNode)
-				// Estabelece a referência no controlador
-				if (this.element.hasAttribute('data-outlet'))
-					this.controller[this.element.getAttribute('data-outlet')] = newView;
+			if (this.element.hasAttribute('ps-kind')) {
+				let newView = new window[this.element.getAttribute('ps-kind')](newNode)
 				// Delega o setup
 				if (newView.setupWithCoder(this) != Coder.CHILDREN_NOT_PROCCESSED)
 					proccessChildren = false;
@@ -199,7 +199,7 @@ Pulsar.class('Coder', function($)
 			// Processa os subelementos se o setup do view já não o fez, ou se não houver classe definida para o elemento
 			if (proccessChildren)
 				this.proccessChildrenTo(newNode)
-				
+
 			return newNode;
 		}
 	}
@@ -209,13 +209,13 @@ Pulsar.class('Coder', function($)
 		@method Coder#copyAttributesTo
 		@param {Element} node Elemento aonde serão copiados os atributos
 	*/
-	$('func').copyAttributesTo = function(node)
+	$('func').copyAttributesTo = function(node, exceptionList)
 	{
 		let attributes = this.element.attributes;
 
 		for (let i = 0, count = attributes.length; i < count; i++) {
 			let attr = attributes[i];
-			node.setAttribute(attr.name, attr.value);
+			node.setAttribute(attr.name, !node.hasAttribute(attr.name) ? attr.value : node.getAttribute(attr.name) + ' ' + attr.value);
 		}
 	}
 
@@ -249,7 +249,8 @@ Pulsar.class('Coder', function($)
 			let child = this.element.children[i]
 
 			if (caseList[child.tagName])
-				caseList[child.tagName](shouldClone ? this.cloneWith(child) : child)
+				if ((caseList[child.tagName](shouldClone ? this.cloneWith(child) : child)) == Coder.DESTROY)
+					this.element.removeChild(child)
 		}
 	}
 })

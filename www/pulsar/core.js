@@ -359,14 +359,15 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 
 		/** @var {Factory~Module} Factory~currentModule Módulo atual. Pode ser <code>document.currentScript || {@linkcode Factory~rootModule} </code> */
 		Object.defineProperty(this, 'currentModule', { get: function() {
-			if (document.currentScript == null)
+			let currentScript = document.currentScript
+			if (currentScript == null)
 				return rootModule // Documento já carregado
-			else if (document.currentScript.state == undefined)
-				return Module.new(document.currentScript) // Não foi criado módulo para o script atual
-			else if (document.currentScript.state == 'complete')
+			else if (currentScript.state == undefined)
+				return Module.new(currentScript) // Não foi criado módulo para o script atual
+			else if (currentScript.state == 'complete')
 				return rootModule // Foi efetuada uma nova importação dentro de algum manipulador de finalização
 			else // Já foi criado o módulo para o script atual
-				return document.currentScript
+				return currentScript
 		}})
 
 		/**
@@ -898,7 +899,7 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 	*/
 	this.class = function (/* className, superclass1, superClass2, ..., body */)
 	{ // Converte o argumento para um array verdadeiro
-		var args = Array.prototype.slice.call(arguments); // Referência: https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Functions/arguments
+		var args = Array.prototype.slice.call(arguments);
 		// Separa os argumentos
 		var className = args.shift();  // Classe
 		var classDefiner = args.pop(); // Definição - corpo da classe

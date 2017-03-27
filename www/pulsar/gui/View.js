@@ -38,7 +38,7 @@ Pulsar.class('View', function($)
 	{
 		View.insertCSSRules({
 			'*': {
-				'position': 'relative',
+				//'position': 'relative',
 				'box-sizing': 'border-box',
 				'font-family': 'sans-serif',
 				'color': '#112244',
@@ -46,7 +46,11 @@ Pulsar.class('View', function($)
 			},
 			'body': {
 				'margin': '0px',
-				'padding': '0px'
+				'padding': '0px',
+				'display': 'block'
+			},
+			'ps-view': {
+				'position': 'relative'
 			}
 		})
 	}
@@ -70,14 +74,31 @@ Pulsar.class('View', function($)
 		if (!index)
 			index = sheet.cssRules.length
 
-		for (let selector in rules) {
-			let rule = rules[selector]
+		function insert(selector)
+		{
 			let content = []
 
-			for (let key in rule)
-				content.push(`${key}:${rule[key]};`)
+			for (let style in selector) {
+				let value = selector[style]
 
-			sheet.insertRule(`${selector}{${content.join('')}}`, index++)
+				if (value.constructor.name == 'Object') {
+					let originalPrefix = prefix
+					prefix += ' ' + style
+					insert(value)
+					prefix = originalPrefix
+				}
+				else {
+					content.push(`${style}:${value};`)
+				}
+			}
+
+			sheet.insertRule(`${prefix}{${content.join('')}}`, index++)
+		}
+
+		for (let selector in rules) {
+			var prefix = selector
+			insert(rules[selector])
+			prefix = ''
 		}
 	}
 
@@ -99,6 +120,25 @@ Pulsar.class('View', function($)
 				break
 			}
 		}
+	}
+
+	/**
+	 * 
+	 */
+	$('static func').getClassNameChain = function(object)
+	{
+		let result = []
+		let classIterator = object.constructor.prototype
+
+		do {
+			let constructor = classIterator.constructor
+			result.push('ps' + constructor.name.replace(/[A-Z]+/g, digit => '-' + digit.toLowerCase()))
+
+			classIterator = Object.getPrototypeOf(constructor.prototype)
+		}
+		while (classIterator.constructor != Any)
+
+		return result.reverse().join(' ')
 	}
 
 	/**
@@ -307,7 +347,7 @@ Pulsar.class('View', function($)
 
 	/** @var {Bool} View#hidden Estabelece a visibilidade do elemento */
 	$('var').hidden = {
-		get: function() { return $(this).node.style.visibility == 'hidden' },
+		get: function() { return this.computedStyle.visibility == 'hidden' },
 		set: function(yesOrNo) { $(this).node.style.visibility = (yesOrNo) ? 'hidden' : 'visible' }
 	}
 
@@ -366,9 +406,6 @@ Pulsar.class('View', function($)
 	/** @var {Rectangle} View#frame Valor em pixels da coordenada e tamanho */
 	$('var').frame = {
 		get: function() {
-			if ($(this).layer == undefined)
-				$(this).createLayer()
-
 			return {
 				origin: {
 					x: $(this).node.offsetLeft,
@@ -381,7 +418,6 @@ Pulsar.class('View', function($)
 			}
 		},
 		set: function(newFrame) {
-			//$(this).node.style.margin = '0px 0px 0px 0px';
 			$(this).node.style.left = newFrame.origin.x + 'px';
 			$(this).node.style.top = newFrame.origin.y + 'px';
 			$(this).node.style.width = newFrame.size.width + 'px';
@@ -409,14 +445,12 @@ Pulsar.class('View', function($)
 		if ((typeof node) == 'string')
 			node = document.createElement(node)
 
-		Reflect.defineProperty(node, 'view', { value: this })
-		node.setAttribute('data-kind', this.constructor.name)
-		node.className = 'pulsar-gui-view ' + node.className
-
 		for (let key in attributes)
 			node.setAttribute(key, attributes[key])
 
+		Reflect.defineProperty(node, 'view', { value: this })
 		$(this).node = node
+		this.addClassName(this.classNameChain)
 
 		if (drawMethod)
 			this.drawMethod = drawMethod
@@ -452,6 +486,13 @@ Pulsar.class('View', function($)
 		}
 
 		$(this).node.className = classNames.join(' ')
+	}
+
+	/**
+
+	*/
+	$('lazy var').classNameChain = function () {
+		return View.getClassNameChain(this)
 	}
 
 	/**
@@ -520,11 +561,18 @@ Pulsar.class('View', function($)
 	*/
 	$('func').replaceSubview = function(currentSubview, exitAnimation, newSubview, enterAnimation, options, completionHandler, insertBefore)
 	{
-		if (!currentSubview && !newSubview && completionHandler) {
-			completionHandler(); return
+		if (currentSubview) {
+			currentSubview.removeFromSuperview()
 		}
 
-		if (currentSubview) {
+		if (newSubview) {
+			this.addSubview(newSubview)
+		}
+
+		if (completionHandler)
+			completionHandler()
+
+		/*if (currentSubview) {
 			currentSubview.transit(options || { duration: 2.25 }, exitAnimation, () => {
 				currentSubview.removeFromSuperview()
 
@@ -541,19 +589,70 @@ Pulsar.class('View', function($)
 				if (completionHandler)
 					completionHandler()
 			})
-		}
+		}*/
 	}
 
 	/**
 		Realiza uma cópia de `this`.
 		@param {Bool} deep Determina se os subelementos devem ser clonados também.
 		@returns Uma cópia de `this`.
-		// TODO: Clonar propriedades de `this` também, e os views dos ubelementos.
+		// TODO: Clonar propriedades de `this` também, e os views dos subelementos.
 	*/
 	$('func').clone = function(deep)
 	{
 		let cloned = new View($(this).node.cloneNode(deep || true))
 		return cloned
+	}
+
+	$('func').translatePoint = function(point, from)
+	{
+		if (!point) point = { x:0, y:0 }
+		if (from instanceof View) from = from.node
+		const to = $(this).node
+
+		if (!from.offsetParent || !to.offsetParent)
+			throw new Error('Impossible to determine the positions')
+
+		function translate(nodes)
+		{
+			const p = { x: point.x, y: point.y }
+			let iterator = nodes.child
+
+			while (iterator != nodes.parent) {
+				p.x += iterator.offsetLeft
+				p.y += iterator.offsetTop
+
+				iterator = iterator.offsetParent
+			}
+
+			return p
+		}
+
+		let rootFrom = from.offsetParent
+		let rootTo = to.offsetParent
+
+		while (rootFrom.offsetParent)
+			rootFrom = rootFrom.offsetParent
+		while (rootTo.offsetParent)
+			rootTo = rootTo.offsetParent
+
+		if (rootFrom != rootTo)
+			throw new Error('There is no commun parent')
+
+		const fromPoint = translate({ child: from, parent: rootTo })
+		const toPoint = translate({ child: to, parent: rootTo })
+
+		return { x: fromPoint.x - toPoint.x, y: fromPoint.y - toPoint.y }
+	}
+
+	$('func').translateFrame = function(frame, from)
+	{
+		if (from instanceof View) from = from.node
+		if (!frame) frame = { origin: { x:0, y:0 }, size: { width: from.offsetWidth, height: from.offsetHeight } }
+
+		frame.origin = this.translatePoint(frame.origin, from)
+
+		return frame
 	}
 
 	/**
@@ -582,7 +681,7 @@ Pulsar.class('View', function($)
 	*/
 	$('func').setupWithCoder = function(coder)
 	{
-		coder.copyAttributesTo(this.node)
+		coder.copyAttributesTo($(this).node)
 
 		var data = coder.evalData('keys');
 
@@ -590,6 +689,10 @@ Pulsar.class('View', function($)
 			this[key] = data[key];
 
 		var controller = coder.controller;
+
+		// Estabelece a referência no controlador
+		if (coder.element.hasAttribute('ps-outlet'))
+			controller[coder.element.getAttribute('ps-outlet')] = this
 
 		var events = coder.listData('events');
 
@@ -625,7 +728,7 @@ Pulsar.class('View', function($)
 	// TODO: Usar `window.requestAnimationFrame` e otimizar mais.
 	$('func').requestDisplay = function()
 	{
-		if (!$(this).skedToDisplay && this.drawMethod) {
+		if (!$(this).askedToDisplay && this.drawMethod) {
 			$(this).askedToDisplay = true
 			Application.dispatchAsync(() => {
 				let context = this.context

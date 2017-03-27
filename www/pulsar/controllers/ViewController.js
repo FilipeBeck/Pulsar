@@ -47,6 +47,11 @@ Pulsar.class('ViewController', function($)
 	/** @var {Element[]} ViewController#connections Conexões com outras cenas */
 	$('var').connections = null
 
+	/** */
+	$('lazy var').classNameChain = function() {
+		return View.getClassNameChain(this)
+	}
+
 	/**
 		Cria um controlador com o storyboard e controlador contenedor especificados
 		@constructs ViewController
@@ -86,7 +91,7 @@ Pulsar.class('ViewController', function($)
 			view: child => {
 				var node = coder.cloneWith(child).proccessElement('div');
 				this.view = node.view || new View(node);//(node.view != undefined) ? node.view : new View(node);
-				this.view.addClassName('pulsar-controllers-view')
+				this.view.addClassName(this.classNameChain)
 			},
 			connections: child => {
 				this.connections = child

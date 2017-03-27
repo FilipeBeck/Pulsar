@@ -113,7 +113,16 @@ Pulsar.class('Storyboard', function($)
 			for (let i = 0, count = children.length; i < count; i++) {
 				let child = children[i]
 
-				Factory.import(child.getAttribute('src'), child.getAttribute('base-type'))
+				if (child.tagName.toLowerCase() == 'script') {
+					Factory.import((child.getAttribute('src') || child.getAttribute('href')), child.getAttribute('base-type'))
+				}
+				else {
+					let link = document.createElement('link')
+					link.href = child.getAttribute('href')
+					link.rel = 'stylesheet'
+					link.type = 'text/css'
+					document.head.appendChild(link)
+				}
 			}
 
 			Factory.arrive(completionHandler)
@@ -146,7 +155,13 @@ Pulsar.class('Storyboard', function($)
 		let complete = (scene) =>
 		{
 			$(this).loadDependencies(scene.querySelector('dependencies'), () => {
-				let controller = new window[scene.getAttribute('controller')](this)
+				let name = scene.getAttribute('controller')
+				let controllerContructor = window[name]
+
+				if (!controllerContructor)
+					throw new Error(`Controller '${name}' not found`)
+
+				let controller = new controllerContructor(this)
 				let coder = new Coder(scene, controller)
 
 				controller.setupWithCoder(coder)
