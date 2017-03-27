@@ -913,7 +913,7 @@ Object.defineProperty(window, 'Pulsar', { value: new function Pulsar()
 		// Verifica se há função definidora como último argumento, e se o argumento está correto
 		if (typeof classDefiner !== 'function')
 			throw new TypeError('You need provide the \'class definer function\' as last argument in \'' + className + '\' definition');
-		else if (classDefiner.toString().match(/function[^)]+/) != 'function ($')
+		else if (classDefiner.toString().match(/function\s*\(\$\)/) == null)
 			throw TypeError('Invalid name for \'class definer\' argument in \'' + className + '\' definition. Use \'function($)\'');
 
 		var privateInstances = new WeakMap();
