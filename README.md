@@ -1,5 +1,5 @@
 # Pulsar
-Biblioteca para criação de classes em Javascript, com suporte a heraça múltipla e escopo privado. Atualmente está sendo estendida em um framework de interface gráfica para ser usado no ambiente de execução Cordova.
+Biblioteca para criação de classes em Javascript, com suporte a heraça múltipla e escopo privado. Atualmente está sendo estendida em um framework de interface gráfica.
 
 ## Exemplo
 ```Javascript
